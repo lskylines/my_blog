@@ -18,10 +18,8 @@ class UserRegisterForm(forms.ModelForm):
 
     #对两次输入密码是否一致检查
     def clean_password2(self):
-
         data = self.cleaned_data
-        user = User.objects.get(username=data["username"])
-        print("校验密码是否相同", data.get("password"), data.get("password2"))
+        print("data:", data)
         if data.get("password") == data.get("password2"):
             return data.get("password")
         else:
