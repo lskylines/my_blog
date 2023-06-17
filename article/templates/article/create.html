@@ -17,6 +17,18 @@
                     <input type="text" class="form-control" id="title" name="title">
                 </div>
 
+                {% if columns %}
+                    <div class="form-group">
+                        <label for="column">栏目</label>
+                        <select class="form-control" id="column" name="column">
+                             <option value="none">请选择栏目</option>
+                            {% for column in columns %}
+                                <option value="{{column.id}}">{{column}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
+
                 <div class="form-group">
                     <label for="body">文章正文</label>
                     <textarea type="text" class="form-control" id="body" name="body" rows="12"></textarea>
