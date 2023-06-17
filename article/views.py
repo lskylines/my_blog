@@ -24,6 +24,10 @@ def article_list(request):
 def article_detail(request, id):
     article = ArticlePost.objects.get(id=id)
 
+    # 浏览量 + 1
+    article.total_views += 1
+    article.save(update_fields=["total_views"])
+
     # 将Markdown语法渲染成HTML
     article.body = markdown.markdown(article.body,
                                      extensions=[
@@ -63,17 +67,26 @@ def article_delete(request, id):
     return redirect("article:article_list")
 
 
+@login_required(login_url="/userprofile/login/")
 def article_safe_delete(request, id):
     if request.method == "POST":
         article = ArticlePost.objects.get(id=id)
+        if request.user != article.author:
+            return HttpResponse("你无权限删除文章")
         article.delete()
         return redirect("article:article_list")
     else:
         return HttpResponse("仅允许post请求")
 
 
+@login_required(login_url="/userprofile/login/")
 def article_update(request, id):
     article = ArticlePost.objects.get(id=id)
+
+
+    if request.user != article.author:
+        return HttpResponse("你无权修改这篇文章")
+
     if request.method == "POST":
         article_post_form = ArticlePostForm(data=request.POST)
         if article_post_form.is_valid():

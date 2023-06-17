@@ -16,6 +16,8 @@ class ArticlePost(models.Model):
     # 文章更新时间
     updated = models.DateTimeField(auto_now=True)
 
+    total_views = models.PositiveIntegerField(default=0)
+
     # 内部类用于给model定义元数据
 
     class Meta:
