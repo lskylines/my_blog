@@ -6,7 +6,6 @@
 {% endblock title %}
 
 {% block content %}
-
 <div class="container">
     <div class="row mt-2">
         {% for article in articles %}
@@ -25,6 +24,39 @@
         </div>
         {% endfor %}
     </div>
-</div>
 
+    <!--页码导航栏-->
+
+    <div class="pagination row">
+        <div class="m-auto">
+            <span class="step-links">
+                {% if articles.has_previous %}
+                <a href="?page=1" class="btn btn-success">
+                    &laquo; Previous
+                </a>
+                <span>...</span>
+                <a href="?page={{articles.previous_page_number}}">
+                    {{article.previous_page_number}}
+                </a>
+                {% endif %}
+
+                <!--当前页面-->
+                <span class="current btn btn-danger btn-lg">
+                    {{articles.number}}
+                </span>
+
+                {% if articles.has_next %}
+                    <a href="?page={{articles.next_page_number}}" class="btn btn-secondary">
+                        {{articles.next_page_number}}
+                    </a>
+                    <span>....</span>
+                    <a href="?page={{articles.paginator.num_pages}}" class="btn btn-success">
+                        Next &raquo;
+                    </a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+</div>
 {% endblock content %}

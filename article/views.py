@@ -5,9 +5,18 @@ from .forms import ArticlePostForm
 from django.contrib.auth.models import User
 import markdown
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+
 
 def article_list(request):
-    articles = ArticlePost.objects.all()
+    article_list = ArticlePost.objects.all()
+
+    # 修改每页显示2篇文章
+    paginator = Paginator(article_list, 2)
+
+    # 获取页码
+    page = request.GET.get("page")
+    articles = paginator.get_page(page)
     context = {"articles": articles}
     return render(request, "article/list.html", context)
 
@@ -15,14 +24,14 @@ def article_list(request):
 def article_detail(request, id):
     article = ArticlePost.objects.get(id=id)
 
-    #将Markdown语法渲染成HTML
+    # 将Markdown语法渲染成HTML
     article.body = markdown.markdown(article.body,
-    extensions=[
-        #包含缩写，表格等常用扩展
-        'markdown.extensions.extra',
-        #语法高亮扩展
-        #'markdown.extensions.codehilite',
-    ])
+                                     extensions=[
+                                         # 包含缩写，表格等常用扩展
+                                         'markdown.extensions.extra',
+                                         # 语法高亮扩展
+                                         # 'markdown.extensions.codehilite',
+                                     ])
     context = {"article": article}
     return render(request, "article/detail.html", context)
 
@@ -32,9 +41,9 @@ def article_create(request):
     if request.method == "POST":
         print("article create post....")
         article_post_form = ArticlePostForm(data=request.POST)
-        #判断提交数据是否满足模型
+        # 判断提交数据是否满足模型
         if article_post_form.is_valid():
-            #保存数据，暂不提交到数据库
+            # 保存数据，暂不提交到数据库
             new_article = article_post_form.save(commit=False)
             new_article.author = User.objects.get(id=request.user.id)
             new_article.save()
@@ -49,7 +58,7 @@ def article_create(request):
 
 
 def article_delete(request, id):
-    article = ArticlePost.objects.get(id = id)
+    article = ArticlePost.objects.get(id=id)
     article.delete()
     return redirect("article:article_list")
 
