@@ -7,6 +7,7 @@ import markdown
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
+from comment.models import Comment
 
 
 def article_list(request):
@@ -42,10 +43,13 @@ def article_list(request):
 
 def article_detail(request, id):
     article = ArticlePost.objects.get(id=id)
+    comments = Comment.objects.filter(article=id)
+
 
     # 浏览量 + 1
     article.total_views += 1
     article.save(update_fields=["total_views"])
+
 
     md = markdown.Markdown(extensions=[
                           # 包含缩写，表格等常用扩展
@@ -59,7 +63,7 @@ def article_detail(request, id):
 
     # 将Markdown语法渲染成HTML
     article.body = md.convert(article.body)
-    context = {"article": article, "toc": md.toc}
+    context = {"article": article, "toc": md.toc, "comments": comments}
     return render(request, "article/detail.html", context)
 
 
