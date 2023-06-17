@@ -9,7 +9,13 @@ from django.core.paginator import Paginator
 
 
 def article_list(request):
-    article_list = ArticlePost.objects.all()
+
+    if request.GET.get("order") == "total_views":
+        article_list = ArticlePost.objects.all().order_by("-total_views")
+        order = "total_views"
+    else:
+        article_list = ArticlePost.objects.all()
+        order = "normal"
 
     # 修改每页显示2篇文章
     paginator = Paginator(article_list, 2)
@@ -17,7 +23,7 @@ def article_list(request):
     # 获取页码
     page = request.GET.get("page")
     articles = paginator.get_page(page)
-    context = {"articles": articles}
+    context = {"articles": articles, "order": order}
     return render(request, "article/list.html", context)
 
 
@@ -82,7 +88,6 @@ def article_safe_delete(request, id):
 @login_required(login_url="/userprofile/login/")
 def article_update(request, id):
     article = ArticlePost.objects.get(id=id)
-
 
     if request.user != article.author:
         return HttpResponse("你无权修改这篇文章")

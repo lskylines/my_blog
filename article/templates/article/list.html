@@ -7,6 +7,22 @@
 
 {% block content %}
 <div class="container">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'article:article_list' %}">
+                    最新
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'article:article_list' %}?order=total_views">
+                    最热🔥
+                </a>
+            </li>
+        </ol>
+    </nav>
+
     <div class="row mt-2">
         {% for article in articles %}
         <div class="col-4 mb-4">
