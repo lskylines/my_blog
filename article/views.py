@@ -13,31 +13,36 @@ from comment.models import Comment
 def article_list(request):
     search = request.GET.get("search")
     order = request.GET.get("order")
+    column = request.GET.get("column")
+    tag = request.GET.get("tag")
+    article_list = ArticlePost.objects.all()
+
+    # 搜索查询集
     if search:
-        if order == "total_views":
-            article_list = ArticlePost.objects.filter(
-                Q(title__icontains=search) |
-                Q(body__icontains=search)
-            ).order_by("-total_views")
-        else:
-            article_list = ArticlePost.objects.filter(
-                Q(title__icontains=search) |
-                Q(body__icontains=search)
-            )
+        article_list = article_list.filter(
+            Q(title__icontains=search) | Q(body__icontains == search)
+        )
     else:
         search = ""
-        if order == "total_views":
-            article_list = ArticlePost.objects.all().order_by("-total_views")
-        else:
-            article_list = ArticlePost.objects.all()
+
+    # 栏目查询
+    if column is not None and column.isdigit():
+        article_list = article_list.filter(column=column)
+
+    # 标签查询
+    if tag and tag != "None":
+        article_list = article_list.filter(tags__name__in=[tag])
+
+    # 查询集排序
+    if order == "total_views":
+        article_list = article_list.order_by('-total_views')
 
     # 修改每页显示2篇文章
     paginator = Paginator(article_list, 8)
-
     # 获取页码
     page = request.GET.get("page")
     articles = paginator.get_page(page)
-    context = {"articles": articles, "order": order, "search": search}
+    context = {"articles": articles, "order": order, "search": search, "column": column, "tag": tag}
     return render(request, "article/list.html", context)
 
 
@@ -45,21 +50,19 @@ def article_detail(request, id):
     article = ArticlePost.objects.get(id=id)
     comments = Comment.objects.filter(article=id)
 
-
     # 浏览量 + 1
     article.total_views += 1
     article.save(update_fields=["total_views"])
 
-
     md = markdown.Markdown(extensions=[
-                          # 包含缩写，表格等常用扩展
-                          'markdown.extensions.extra',
-                          # 语法高亮扩展
-                          'markdown.extensions.codehilite',
+        # 包含缩写，表格等常用扩展
+        'markdown.extensions.extra',
+        # 语法高亮扩展
+        'markdown.extensions.codehilite',
 
-                          # 目录扩展
-                          "markdown.extensions.toc",
-                      ])
+        # 目录扩展
+        "markdown.extensions.toc",
+    ])
 
     # 将Markdown语法渲染成HTML
     article.body = md.convert(article.body)
@@ -79,8 +82,11 @@ def article_create(request):
             new_article.author = User.objects.get(id=request.user.id)
 
             if request.POST["column"] != "none":
-                new_article.column = ArticleColumn.objects.get(id=request.POST["column"])
+                new_article.column = ArticleColumn.objects.get(
+                    id=request.POST["column"])
             new_article.save()
+
+            article_post_form.save_m2m()
 
             return redirect("article:article_list")
         else:
@@ -123,7 +129,8 @@ def article_update(request, id):
             article.title = request.POST["title"]
             article.body = request.POST["body"]
             if request.POST["column"] != "none":
-                article.column = ArticleColumn.objects.get(id=request.POST["column"])
+                article.column = ArticleColumn.objects.get(
+                    id=request.POST["column"])
             else:
                 article.column = None
             article.save()
@@ -133,5 +140,8 @@ def article_update(request, id):
     else:
         article_post_form = ArticlePostForm()
         columns = ArticleColumn.objects.all()
-        context = {"article": article, "article_post_form": article_post_form, "columns": columns}
+        context = {
+            "article": article,
+            "article_post_form": article_post_form,
+            "columns": columns}
         return render(request, "article/update.html", context)

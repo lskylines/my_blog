@@ -16,9 +16,9 @@
 1. 暂时使用轻便的sqlite3
 
 ### 使用到的库函数
-1. Django ==> 2.0
+1. Django ==> 2.2.13
 2. markdown ==> 3.4.3
-3. django-taggit 
+3. django-taggit ==> 0.23.0
 
 
 ### 项目启动
