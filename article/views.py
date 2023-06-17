@@ -59,7 +59,6 @@ def article_detail(request, id):
         'markdown.extensions.extra',
         # 语法高亮扩展
         'markdown.extensions.codehilite',
-
         # 目录扩展
         "markdown.extensions.toc",
     ])
@@ -74,7 +73,7 @@ def article_detail(request, id):
 def article_create(request):
     if request.method == "POST":
         print("article create post....")
-        article_post_form = ArticlePostForm(data=request.POST)
+        article_post_form = ArticlePostForm(request.POST, request.FILES)
         # 判断提交数据是否满足模型
         if article_post_form.is_valid():
             # 保存数据，暂不提交到数据库
@@ -86,6 +85,7 @@ def article_create(request):
                     id=request.POST["column"])
             new_article.save()
 
+            # 标签多对多关系保存
             article_post_form.save_m2m()
 
             return redirect("article:article_list")

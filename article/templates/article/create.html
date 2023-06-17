@@ -10,8 +10,15 @@
     <div class="row">
         <div class="col-12">
             <br>
-            <form method="post" action="{% url 'article:article_create' %}">
+            <form method="post" enctype="multipart/form-data" action="{% url 'article:article_create' %}">
                 {% csrf_token %}
+
+                <!--文章标题图-->
+                <div class="form-group">
+                    <label for="avatar">标题图</label>
+                    <input type="file" class="form-control-file" name="avatar" id="avatar">
+                </div>
+
                 <div class="form-group">
                     <label for="title">文章标题</label>
                     <input type="text" class="form-control" id="title" name="title">

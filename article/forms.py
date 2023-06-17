@@ -7,4 +7,4 @@ class ArticlePostForm(forms.ModelForm):
         # 指明数据模型来源
         model = ArticlePost
         # 定义表单包含字段
-        fields = ("title", "body", "tags")
+        fields = ("title", "body", "tags", "avatar")
