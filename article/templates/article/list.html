@@ -11,17 +11,36 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'article:article_list' %}">
+                <a href="{% url 'article:article_list' %}?search={{search}}">
                     最新
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'article:article_list' %}?order=total_views">
+                <a href="{% url 'article:article_list' %}?order=total_views&search={{search}}">
                     最热🔥
                 </a>
             </li>
         </ol>
     </nav>
+
+    <!--搜索栏-->
+    <div class="row">
+        <div class="col-auto mr-auto">
+            <form class="form-inline">
+                <label class="sr-only">content</label>
+                <input type="text"class="form-control mb-2 mr-sm-2" name="search" placeholder="搜索文章..." required>
+            </form>
+        </div>
+    </div>
+
+    {% if search %}
+        {% if articles %}
+            <h4><span style="color:red">"{{search}}"</span>搜索结果如下:</h4>
+            <hr />
+        {% else %}
+            <h4>暂无<span style="color:red">"{{search}}</span>有关文章</h4>
+        {% endif %}
+    {% endif %}
 
     <div class="row mt-2">
         {% for article in articles %}
@@ -53,11 +72,11 @@
         <div class="m-auto">
             <span class="step-links">
                 {% if articles.has_previous %}
-                <a href="?page=1" class="btn btn-success">
+                <a href="?page=1&order={{order}}&search={{search}}" class="btn btn-success">
                     &laquo; Previous
                 </a>
                 <span>...</span>
-                <a href="?page={{articles.previous_page_number}}">
+                <a href="?page={{articles.previous_page_number}}&order={{order}}&search={{search}}">
                     {{article.previous_page_number}}
                 </a>
                 {% endif %}
@@ -68,11 +87,11 @@
                 </span>
 
                 {% if articles.has_next %}
-                    <a href="?page={{articles.next_page_number}}" class="btn btn-secondary">
+                    <a href="?page={{articles.next_page_number}}&order={{order}}&search={{search}}" class="btn btn-secondary">
                         {{articles.next_page_number}}
                     </a>
                     <span>....</span>
-                    <a href="?page={{articles.paginator.num_pages}}" class="btn btn-success">
+                    <a href="?page={{articles.paginator.num_pages}}&order={{order}}&search={{search}}" class="btn btn-success">
                         Next &raquo;
                     </a>
                 {% endif %}
