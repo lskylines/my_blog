@@ -22,7 +22,13 @@
     {% include 'footer.html' %}
     <!-- bootstrap.js 依赖 jquery.js 和popper.js，因此在这里引入 -->
     <script src="{% static 'jquery/jquery-3.7.0.min.js' %}"></script>
+
+    {% block script %}
+    {% endblock script %}
     <script src="{% static 'layui/layui.js' %}"></script>
+
+    <script src="{% static '/ckeditor/ckeditor/plugins/prism/lib/prism/prism_patched.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'prism/prism.css' %}">
     <!--
         popper.js 采用 cdn 远程引入，意思是你不需要把它下载到本地。
         在实际的开发中推荐静态文件尽量都使用 cdn 的形式。

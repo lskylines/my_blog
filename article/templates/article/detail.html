@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
+
 {% block title %}
   文章详情
 {% endblock title %}
 {% block content %}
+
+
 <div class="container">
   <div class="row">
     <div class="col-9">
@@ -42,7 +45,10 @@
               <label for="body">
                 <strong>我也要发言:</strong>
               </label>
-              <textarea type="text" class="form-control" id="body" name="body" rows="2"></textarea>
+              <div>
+                {{comment_form.media}}
+                {{comment_form.body}}
+              </div>
             </div>
             <button type="submit" class="btn btn-primary">发送</button>
           </form>
@@ -64,7 +70,7 @@
             <strong style="color:pink">{{comment.user}}</strong>于
             <span style="color:green">{{comment.created|date:"Y-m-d H:i:s"}}</span>时说:
         </p>
-        <pre style="font-family: inherit; font-size: 1em;">{{comment.body}}</pre>
+          <div>{{comment.body|safe}}</div>
         {% endfor %}
       </div>
 
@@ -104,6 +110,14 @@
       }
     })
   }
+
+
 </script>
 
 {% endblock content %}
+
+{% block script %}
+  <script>
+    $(".django-ckeditor-widget").removeAttr("style")
+  </script>
+{% endblock script %}

@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from comment.models import Comment
-
+from comment.forms import CommentForm
 
 def article_list(request):
     search = request.GET.get("search")
@@ -65,7 +65,10 @@ def article_detail(request, id):
 
     # 将Markdown语法渲染成HTML
     article.body = md.convert(article.body)
-    context = {"article": article, "toc": md.toc, "comments": comments}
+
+    # 引入评论表单
+    Comment_form = CommentForm()
+    context = {"article": article, "toc": md.toc, "comments": comments, "comment_form": Comment_form}
     return render(request, "article/detail.html", context)
 
 
