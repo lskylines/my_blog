@@ -1,5 +1,5 @@
 # my_blog
-### 基于Django实现Blog
+### 基于Django实现Blog，参考教程:https://www.dusaiphoto.com/article/2/
 ### 涉及到的功能
 1. 用户注册登录
 2. 文章发布，编辑，文章列表查询，文章详情查看
